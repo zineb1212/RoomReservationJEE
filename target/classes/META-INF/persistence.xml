@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+    <persistence-unit name="RoomReservationPU" transaction-type="JTA">
+        <!-- Provider for Hibernate -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        
+        <!-- We will list entity classes here once created, or let it auto-scan -->
+        <!-- <class>com.reservation.model.User</class> -->
+
+        <properties>
+            <!-- H2 Connection Configuration -->
+            <!-- Note: In a real server these should be a JTA DataSource, 
+                 but for simplicity we might configure direct JDBC properties 
+                 if the container allows or if we were using RESOURCE_LOCAL.
+                 However, for JTA we usually need a DataSource. 
+                 I'll assume a DefaultDataSource is available or we configure properties for a specific provider to handle JTA internal.
+                 Actually, the simplest way for a portable app is using a DataSource. 
+                 Since the user asked for "Mini Project", I will define standard properties 
+                 that work with default data sources in many servers or fallback to example DS.
+            -->
+            
+            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:roomreservation;DB_CLOSE_DELAY=-1"/>
+            <property name="jakarta.persistence.jdbc.user" value="sa"/>
+            <property name="jakarta.persistence.jdbc.password" value=""/>
+            
+            <!-- Hibernate Properties -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
