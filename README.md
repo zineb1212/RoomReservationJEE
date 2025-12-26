@@ -1,45 +1,79 @@
 # Room Reservation System (JEE)
 
-This is a Mini-Project for a Room Reservation System built with Jakarta EE (JEE) 10.
+Welcome! This is a **Room Reservation System** built with **Java Enterprise Edition (JEE) 10**.
+It allows users to search for available rooms, check schedules, and manage bookings with a modern, responsive interface.
 
-## Technologies
-- **Presentation**: JSP, Servlets, JSTL
-- **Business Logic**: EJB (Stateless Session Beans)
-- **Persistence**: JPA (Hibernate), H2 Database (In-memory/Embedded)
-- **Build**: Maven
+## 🚀 Features
+- **Modern UI**: Clean, responsive design with an Indigo/Blue theme.
+- **Availability Search**: Filter rooms by **Date**, **Time Range**, and **Capacity**.
+- **Real-time Status**: Instantly see if a room is **✅ Available** or **❌ Occupied** for your selected time.
+- **Schedule View**: View the daily schedule of occupied slots for every room.
+- **Admin Dashboard**: Manage rooms (Create, Edit, Delete).
+- **Reservation Management**: Users can Book, Cancel, and Edit their own reservations.
 
-## Architecture
-- `com.reservation.model`: JPA Entities (User, Room, Reservation)
-- `com.reservation.service`: EJB Services (Business Logic, Transaction Management)
-- `com.reservation.controller`: Servlets (HTTP Request Handling)
+---
 
-## Prerequisites
-- Java JDK 17+
-- Maven 3.8+
-- Application Server (WildFly 27+)
+## 🛠️ Prerequisites
+Before running this project, ensure you have the following installed on your PC:
+1.  **Java JDK 17** (or higher).
+2.  **Maven 3.8+** (for building the project).
+3.  **Application Server**: A Jakarta EE 10 compatible server.
+    -   Recommended: **WildFly 27+** (or newer).
 
-## How to Build
-Run the following command in the project root:
+---
+
+## 📦 How to Run
+
+### Step 1: Build the Project
+Open a terminal (Command Prompt or PowerShell) in the project folder and run:
 ```sh
 mvn clean package
 ```
-This will generate `target/RoomReservationJEE.war`.
+*Success?* You should see `BUILD SUCCESS` and a file named `RoomReservationJEE.war` inside the `target/` folder.
 
-## How to Deploy
-1. Start your Application Server (e.g., WildFly).
-2. Copy `target/RoomReservationJEE.war` to the deployment directory (e.g., `standalone/deployments/` for WildFly).
-3. Access the application at `http://localhost:8080/RoomReservationJEE`.
+### Step 2: Start the Server
+1.  Navigate to your WildFly server folder.
+2.  Run the startup script:
+    -   **Windows**: `bin\standalone.bat`
+    -   **Mac/Linux**: `bin/standalone.sh`
 
-## Default Configuration
-- **Database**: H2 In-Memory (`jdbc:h2:mem:roomreservation`). Data is lost on restart.
-- **Persistence Unit**: `RoomReservationPU` configured in `src/main/resources/META-INF/persistence.xml`.
+### Step 3: Deploy
+1.  Copy the generated `target/RoomReservationJEE.war` file.
+2.  Paste it into the `standalone/deployments/` folder inside your WildFly directory.
+3.  The server will automatically detect and deploy it.
 
-## Usage
-1. **Register**: Create a new account at `/auth/register`.
-2. **Login**: Use your credentials.
-3. **Admin**: No default admin is seeded. You can manually insert an ADMIN user in the DB or modify `AuthServlet` to seed one.
-4. **Book**: Navigate to 'Rooms', select a room, and choose start/end times.
+### Step 4: Access the App
+Open your browser and go to:
+👉 **[http://localhost:8080/RoomReservationJEE](http://localhost:8080/RoomReservationJEE)**
 
-## Conflict logic
-The system prevents booking if:
-`(NewStart < ExistingEnd) AND (NewEnd > ExistingStart)`
+---
+
+## 🔑 Login Credentials
+
+The database is pre-loaded with sample users and rooms.
+
+### Admin Account
+- **Username**: `admin`
+- **Password**: `admin`
+- *Access*: Can manage rooms and see all reservations.
+
+### User Account
+- **Username**: `user`
+- **Password**: `user`
+- *Access*: Can search and book rooms.
+
+---
+
+## ⚙️ Configuration
+The application is pre-configured to use the **WildFly Default DataSource**.
+- **DataSource JNDI**: `java:jboss/datasources/ExampleDS` (H2 Database).
+- **Persistence Unit**: `RoomReservationPU`.
+- **Note**: Ensure your WildFly instance has the `ExampleDS` enabled (it is enabled by default in `standalone.xml`).
+
+---
+
+## 🧩 Architecture
+- **Frontend**: JSP, JSTL, CSS3 (Modern Design).
+- **Backend**: Jakarta Servlets, EJB (Stateless).
+- **Database**: H2 In-Memory (Data resets when server stops).
+- **Persistence**: Hibernate (JPA).
