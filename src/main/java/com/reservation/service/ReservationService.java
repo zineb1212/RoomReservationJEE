@@ -14,7 +14,10 @@ public class ReservationService {
     @PersistenceContext(unitName = "RoomReservationPU")
     private EntityManager em;
 
+    private static final int MAX_DURATION_HOURS = 3;
+
     public void makeReservation(Reservation reservation) throws Exception {
+        validateDuration(reservation.getStartTime(), reservation.getEndTime());
         if (!isRoomAvailable(reservation.getRoom(), reservation.getStartTime(), reservation.getEndTime())) {
             throw new Exception("Room is not available for the selected time period.");
         }
@@ -22,11 +25,20 @@ public class ReservationService {
     }
 
     public void updateReservation(Reservation reservation) throws Exception {
+        validateDuration(reservation.getStartTime(), reservation.getEndTime());
         if (!isRoomAvailable(reservation.getRoom(), reservation.getStartTime(), reservation.getEndTime(),
                 reservation.getId())) {
             throw new Exception("Room is not available for the selected time period.");
         }
         em.merge(reservation);
+    }
+
+    private void validateDuration(LocalDateTime start, LocalDateTime end) throws Exception {
+        long hours = java.time.Duration.between(start, end).toHours();
+        if (hours > MAX_DURATION_HOURS
+                || (hours == MAX_DURATION_HOURS && java.time.Duration.between(start, end).toMinutes() % 60 > 0)) {
+            throw new Exception("Reservation cannot exceed " + MAX_DURATION_HOURS + " hours.");
+        }
     }
 
     public boolean isRoomAvailable(Room room, LocalDateTime start, LocalDateTime end) {

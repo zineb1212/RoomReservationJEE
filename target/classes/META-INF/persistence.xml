@@ -7,12 +7,11 @@
         <!-- Provider for Hibernate -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
-        <!-- WildFly Default H2 DataSource -->
-        <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+        <!-- Custom H2 DataSource defined in room-ds.xml -->
+        <jta-data-source>java:jboss/datasources/RoomDS</jta-data-source>
 
         <properties>
             <!-- Hibernate Properties for WildFly -->
-            <!-- Note: dialect is often auto-detected or provided by the container module -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="true"/>

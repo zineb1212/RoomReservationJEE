@@ -49,6 +49,12 @@ public class RoomServlet extends HttpServlet {
             }
         }
 
+        // For Admin Dashboard: Fetch all bookings
+        if (user.getRole() == User.Role.ADMIN) {
+            List<com.reservation.model.Reservation> adminReservations = reservationService.getAllReservations();
+            req.setAttribute("adminReservations", adminReservations);
+        }
+
         // Always list all rooms
         List<Room> rooms = roomService.getAllRooms();
 
@@ -72,6 +78,13 @@ public class RoomServlet extends HttpServlet {
         java.time.LocalDate date = java.time.LocalDate.parse(dateStr);
         List<com.reservation.model.Reservation> dailyReservations = reservationService.getReservationsByDate(date);
         req.setAttribute("dailyReservations", dailyReservations);
+
+        // Fetch user's own reservations for the sidebar
+        if (user.getRole() != User.Role.ADMIN) {
+            List<com.reservation.model.Reservation> myReservations = reservationService
+                    .getUserReservations(user.getId());
+            req.setAttribute("myReservations", myReservations);
+        }
 
         req.setAttribute("rooms", rooms);
         req.getRequestDispatcher("/WEB-INF/views/rooms.jsp").forward(req, resp);

@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/reservations/*")
 public class ReservationServlet extends HttpServlet {
@@ -34,6 +36,11 @@ public class ReservationServlet extends HttpServlet {
 
         String path = req.getPathInfo();
         if ("/book".equals(path)) {
+            if (user.getRole() == User.Role.ADMIN) {
+                // Admins cannot book
+                resp.sendRedirect(req.getContextPath() + "/rooms");
+                return;
+            }
             // Show booking form for a specific room
             String roomId = req.getParameter("roomId");
             Room room = roomService.findById(Long.parseLong(roomId));
@@ -50,7 +57,7 @@ public class ReservationServlet extends HttpServlet {
                         reservationService.cancelReservation(id);
                     }
                 }
-                resp.sendRedirect(req.getContextPath() + "/reservations");
+                resp.sendRedirect(req.getContextPath() + "/rooms");
                 return;
             } else if ("edit".equals(action)) {
                 Long id = Long.parseLong(req.getParameter("id"));
@@ -123,6 +130,9 @@ public class ReservationServlet extends HttpServlet {
                 reservationService.updateReservation(res);
             } else {
                 // Create
+                if (user.getRole() == User.Role.ADMIN) {
+                    throw new Exception("Admins cannot make reservations.");
+                }
                 Room room = roomService.findById(roomId);
                 res = new Reservation();
                 res.setRoom(room);
@@ -133,19 +143,11 @@ public class ReservationServlet extends HttpServlet {
                 reservationService.makeReservation(res);
             }
 
-            resp.sendRedirect(req.getContextPath() + "/reservations");
+            resp.sendRedirect(req.getContextPath() + "/rooms?success=true");
 
         } catch (Exception e) {
-            req.setAttribute("error", e.getMessage());
-            // Reload room to show form again
-            Long roomId = Long.parseLong(req.getParameter("roomId"));
-            req.setAttribute("room", roomService.findById(roomId));
-            // Also need to keep reservation object if editing failed
-            String idStr = req.getParameter("id");
-            if (idStr != null && !idStr.isEmpty()) {
-                req.setAttribute("reservation", reservationService.findById(Long.parseLong(idStr)));
-            }
-            req.getRequestDispatcher("/WEB-INF/views/reservation_form.jsp").forward(req, resp);
+            String errorMessage = URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+            resp.sendRedirect(req.getContextPath() + "/rooms?error=" + errorMessage);
         }
     }
 }
